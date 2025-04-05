@@ -9,17 +9,17 @@ import java.util.List;
 @Setter
 public class Route {
 
-     private List<String> cities;
+     private List<String> route;
      private int totalPrice;
 
-    public Route(List<String> cities, int totalPrice) {
-        this.cities = cities;
+    public Route(List<String> route, int totalPrice) {
+        this.route = route;
         this.totalPrice = totalPrice;
     }
     public Route(){}
 
     @Override
     public String toString() {
-        return cities + ", " + totalPrice;
+        return route + ", " + totalPrice;
     }
 }

@@ -7,8 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class RouteFinderService {
@@ -20,42 +19,44 @@ public class RouteFinderService {
         this.flightDataLoader = flightDataLoader;
     }
 
-    public List<Route> findRoutes(String origin, String destination,int maxFlights) throws IOException {
+    public List<Route> findRoutes(String origin, String destination, int maxFlights) throws IOException {
+
         List<Route> routes = new ArrayList<>();
+        List<Flight> allFlights = flightDataLoader.loadFlightsFromFile("src/main/resources/data.txt");
 
-        List<Flight> allEndPointFlights = findAllEndPointFlights
-                (destination,this.flightDataLoader
-                        .loadFlightsFromFile
-                                ("src\\main\\resources\\data.txt"));
+        Map<String, List<Flight>> flightMap = new HashMap<>();
+            for (Flight flight : allFlights) {
+                flightMap.computeIfAbsent(flight.getFrom(), k -> new ArrayList<>()).add(flight);
+         }
 
-        for(Flight flight : allEndPointFlights) {
-            if(flight.getFrom().equals(origin)){
-                routes.add(new Route(List.of(flight.getFrom(),flight.getTo()),flight.getPrice()));
-            }
-        }
+        findRoutesDFS(origin, destination, flightMap, new ArrayList<>(), 0, routes, maxFlights);
 
-
-
-
-
-
-
-
-
-
+        routes.sort(Comparator.comparingInt(Route::getTotalPrice));
 
         return routes;
     }
 
-    private List<Flight>  findAllEndPointFlights(String destination,List<Flight> flights) throws IOException {
+    private void findRoutesDFS(String currentCity, String destination, Map<String, List<Flight>> flightMap,
+                               List<String> currentPath, int currentPrice, List<Route> routes, int maxFlights) {
+        currentPath.add(currentCity);
 
-        List<Flight> endPointFlights = new ArrayList<>();
+        if (currentCity.equals(destination)) {
 
-        for(Flight flight : flights) {
-            if(flight.getTo().equals(destination)) {
-                endPointFlights.add(flight);
+             routes.add(new Route(new ArrayList<>(currentPath), currentPrice));
+
+        } else if (currentPath.size() <= maxFlights) {
+
+            List<Flight> nextFlights = flightMap.getOrDefault(currentCity, new ArrayList<>());
+
+            for (Flight flight : nextFlights) {
+                if (!currentPath.contains(flight.getTo())) {
+
+                    findRoutesDFS(flight.getTo(), destination, flightMap, currentPath,
+                            currentPrice + flight.getPrice(), routes, maxFlights);
+                }
             }
         }
-        return endPointFlights;
+
+        currentPath.remove(currentPath.size() - 1);
     }
 }
