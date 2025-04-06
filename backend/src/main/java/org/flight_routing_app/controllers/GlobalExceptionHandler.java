@@ -1,5 +1,6 @@
 package org.flight_routing_app.controllers;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import org.flight_routing_app.exceptions.NoRoutesException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.util.HashMap;
 import java.util.Map;
 
+@Hidden
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
