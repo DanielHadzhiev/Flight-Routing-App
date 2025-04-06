@@ -29,7 +29,12 @@ public class RouteFinderService {
                 flightMap.computeIfAbsent(flight.getFrom(), k -> new ArrayList<>()).add(flight);
          }
 
-        findRoutesDFS(origin, destination, flightMap, new ArrayList<>(), 0, routes, maxFlights);
+            if (origin.equals(destination)) {
+                throw new IllegalArgumentException("Origin and destination cannot be the same.");
+            }
+
+
+            findRoutesDFS(origin, destination, flightMap, new ArrayList<>(), 0, routes, maxFlights);
 
         routes.sort(Comparator.comparingInt(Route::getTotalPrice));
 
