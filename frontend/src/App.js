@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import './App.css';
+
 function App() {
   const [origin, setOrigin] = useState('');
   const [destination, setDestination] = useState('');
-  const [maxFlights, setMaxFlights] = useState('1'); // Changed from empty string to '1'
+  const [maxFlights, setMaxFlights] = useState('1');
   const [routes, setRoutes] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -11,25 +12,24 @@ function App() {
 
   const handleSearch = async (e) => {
     e.preventDefault();
-    
+
+    setError(null);
+
     if (!origin || !destination) {
       setError('Please provide both origin and destination');
       return;
     }
 
     setLoading(true);
-    setError(null);
     setSearchPerformed(true);
-    
+
     try {
-      // Create request payload
       const payload = {
         origin: origin.toUpperCase(),
         destination: destination.toUpperCase(),
-        maxFlights: parseInt(maxFlights) || 1 // Ensure maxFlights is at least 1
+        maxFlights: parseInt(maxFlights) || 1,
       };
 
-      // Make an API call to the backend service to fetch routes
       const response = await fetch('http://localhost:8080/api/get_routes', {
         method: 'POST',
         headers: {
@@ -38,25 +38,38 @@ function App() {
         body: JSON.stringify(payload),
       });
 
-      // Check if the response is okay
       if (response.ok) {
         const data = await response.json();
-        setRoutes(data); // Set the routes in the state
+        setRoutes(data);
+        setError(null);
+      } else if (response.status === 404) {
+        const data = await response.json();
+        
+        if (data.message === "No routes found") {
+          setRoutes([]);
+          setError(null);
+        } else {
+          setError('Failed to fetch routes. Please try again.');
+        }
+      } else if (response.status === 500) {
+        setError('Sorry, we encountered a server issue. Please try again later.');
+      } else if (response.status === 400) {
+        setError('Invalid input. Please check your data and try again.');
       } else {
-        setError('Failed to fetch routes. Please try again.');
+        setError('An unexpected error occurred. Please try again.');
       }
 
       setLoading(false);
-      
     } catch (err) {
-      setError('Failed to fetch routes. Please try again.');
+      setError('Failed to fetch routes. Please check your network connection and try again.');
       setLoading(false);
     }
-};
+  };
+
   return (
     <div className="App">
       <div className="background-gradient"></div>
-      
+
       <header className="App-header">
         <div className="logo-container">
           <div className="logo">
@@ -66,13 +79,13 @@ function App() {
           <p className="tagline">Find your perfect flight path</p>
         </div>
       </header>
-      
+
       <main className="App-main">
         <div className="hero-section">
           <h1>Discover the Best Routes for Your Journey</h1>
           <p>Enter your origin and destination to find the most affordable flight paths</p>
         </div>
-        
+
         <div className="search-container">
           <form onSubmit={handleSearch}>
             <div className="form-row">
@@ -88,7 +101,7 @@ function App() {
                   required
                 />
               </div>
-              
+
               <div className="form-group">
                 <label htmlFor="destination">Destination</label>
                 <input
@@ -101,7 +114,7 @@ function App() {
                   required
                 />
               </div>
-              
+
               <div className="form-group">
                 <label htmlFor="maxFlights">Max Flights</label>
                 <input
@@ -114,7 +127,7 @@ function App() {
                 />
               </div>
             </div>
-            
+
             <button type="submit" className="search-button" disabled={loading}>
               {loading ? (
                 <span className="loading-spinner"></span>
@@ -127,9 +140,8 @@ function App() {
             </button>
           </form>
         </div>
-        
+
         {error && <div className="error-message">{error}</div>}
-        
         <div className="results-container">
           {loading ? (
             <div className="loading-container">
@@ -144,7 +156,7 @@ function App() {
                 <span className="highlight">Available Routes</span>
                 <span className="route-count">{routes.length} options found</span>
               </h2>
-              
+
               <div className="routes-list">
                 {routes.map((route, index) => (
                   <div key={index} className="route-card">
@@ -168,7 +180,7 @@ function App() {
                         </div>
                       </div>
                     </div>
-                    
+
                     <div className="route-path">
                       {route.route.map((city, cityIndex) => (
                         <React.Fragment key={cityIndex}>
@@ -183,7 +195,7 @@ function App() {
                         </React.Fragment>
                       ))}
                     </div>
-                    
+
                     <div className="route-details">
                       <div className="detail-item">
                         <span className="detail-icon">🛫</span>
@@ -195,7 +207,7 @@ function App() {
                 ))}
               </div>
             </>
-          ) : searchPerformed ? (
+          ) : searchPerformed && !error ? (
             <div className="no-routes">
               <div className="no-routes-icon">🔍</div>
               <h3>No routes found</h3>
@@ -205,7 +217,6 @@ function App() {
           ) : null}
         </div>
       </main>
-    
     </div>
   );
 }

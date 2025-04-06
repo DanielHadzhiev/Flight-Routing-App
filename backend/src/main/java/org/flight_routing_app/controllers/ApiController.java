@@ -1,5 +1,7 @@
 package org.flight_routing_app.controllers;
 
+import jakarta.validation.Valid;
+import org.flight_routing_app.exceptions.NoRoutesException;
 import org.flight_routing_app.model.dto.RequestDTO;
 import org.flight_routing_app.model.entities.Route;
 import org.flight_routing_app.service.RouteFinderService;
@@ -25,9 +27,15 @@ public class ApiController {
     }
 
     @PostMapping
-    public List<Route> findRoutes(@RequestBody RequestDTO request) throws IOException {
+    public List<Route> findRoutes(@RequestBody @Valid RequestDTO request) throws IOException {
 
-        return routeFinderService.findRoutes(request.getOrigin(), request.getDestination(), request.getMaxFlights());
+        List<Route> routes = this.routeFinderService.findRoutes(request.getOrigin(), request.getDestination(), request.getMaxFlights());
+
+        if(routes.isEmpty()){
+            throw new NoRoutesException("No routes found");
+        }
+
+        return routes;
 
     }
 }
