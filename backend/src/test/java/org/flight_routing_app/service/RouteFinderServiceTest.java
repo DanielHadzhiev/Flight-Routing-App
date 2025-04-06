@@ -8,6 +8,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.io.IOException;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 @SpringBootTest
 public class RouteFinderServiceTest {
 
@@ -52,5 +54,11 @@ public class RouteFinderServiceTest {
 
         assert(routes.size()==1);
         assert(routes.get(0).getRoute().get(0).equals("SOF") && routes.get(0).getRoute().get(1).equals("MLE"));
+    }
+    @Test
+    void ifOriginSameAsDestination() {
+        assertThrows(IllegalArgumentException.class, () ->
+                routeFinderService.findRoutes("SOF", "SOF", 2)
+        );
     }
 }
