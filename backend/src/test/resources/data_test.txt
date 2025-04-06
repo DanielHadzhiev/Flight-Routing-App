@@ -1,0 +1,6 @@
+Flights:
+SOF,MLE,70
+SOF,LON,10
+LON,MLE,20
+Origin: SOF
+Destination: MLE

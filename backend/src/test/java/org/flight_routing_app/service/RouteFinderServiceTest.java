@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
 public class RouteFinderServiceTest {
@@ -61,4 +62,15 @@ public class RouteFinderServiceTest {
                 routeFinderService.findRoutes("SOF", "SOF", 2)
         );
     }
+
+    @Test
+    void testNoAvailableRoute() throws IOException {
+        String testOrigin = "SOF";
+        String testDestination = "DFS";
+
+        List<Route> routes = this.routeFinderService.findRoutes(testOrigin, testDestination, 3);
+
+        assertTrue(routes.isEmpty());
+    }
+
 }
