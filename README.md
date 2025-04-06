@@ -14,16 +14,11 @@ Setup Instructions
 1. Clone the repository
 Clone this repository to your local machine:
 
-bash
-Copy
-Edit
+
 git clone https://github.com/DanielHadzhiev/Flight-Routing-App.git
 2. Install dependencies
 Ensure you have the necessary dependencies installed, including the Springdoc OpenAPI dependency for API documentation:
 
-xml
-Copy
-Edit
 <dependency>
     <groupId>org.springdoc</groupId>
     <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
@@ -31,9 +26,6 @@ Edit
 </dependency>
 Run the following command to install all required dependencies:
 
-bash
-Copy
-Edit
 mvn install
 3. Running the app
 Run the application using the following command:
@@ -78,18 +70,14 @@ Optional Parameters:
 maxFlights: Limit the number of flights in the route. For example, if maxFlights is set to 1, only direct flights will be returned.
 
 Example with maxFlights:
-json
-Copy
-Edit
+
 {
     "origin": "SOF",
     "destination": "MLE",
     "maxFlights": 1
 }
 Example Response:
-json
-Copy
-Edit
+
 [
     {
         "cities": ["SOF", "MLE"],
@@ -102,9 +90,6 @@ The app uses a data file (flights_data.txt) to store all available flights and t
 Data Format:
 Each flight is listed as follows:
 
-objectivec
-Copy
-Edit
 SOF,IST,10
 IST,CMB,20
 CMB,MLE,40
@@ -113,9 +98,6 @@ Each line represents a direct flight from one city to another with a price.
 Testing
 To ensure the app works correctly, automated tests have been included. To run tests, use the following command:
 
-bash
-Copy
-Edit
 mvn test
 The tests cover different scenarios like multiple routes, invalid data, and edge cases.
 
