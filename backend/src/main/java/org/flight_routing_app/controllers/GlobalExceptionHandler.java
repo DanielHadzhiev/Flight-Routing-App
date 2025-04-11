@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Hidden;
 import org.flight_routing_app.exceptions.NoRoutesException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -53,5 +54,12 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<String> handleInvalidJson() {
+        return ResponseEntity
+                .badRequest()
+                .body("Invalid value for maxFlights. Please enter a smaller number.");
+    }
+
 
 }
