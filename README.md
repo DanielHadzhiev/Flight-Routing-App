@@ -14,6 +14,10 @@ Make sure to install the necessary dependencies:
 ```bash
 mvn install
 ```
+
+```bash
+npm install
+```
 ## Usage
 Run the application with:
 
