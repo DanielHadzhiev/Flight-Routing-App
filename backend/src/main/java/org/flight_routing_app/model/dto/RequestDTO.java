@@ -21,6 +21,7 @@ public class RequestDTO {
     private String destination;
 
     @Min(value = 1,message = "The value should be at least 1")
+    @Max(value = 100, message = "The value should be below 100")
     private int maxFlights;
 
     public RequestDTO(String origin, String destination, int maxFlights) {
